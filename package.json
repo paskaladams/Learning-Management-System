@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "next-auth": "^4.24.5",
+    "react-pro-sidebar": "^0.7.1",
+    "timeago.js": "^4.0.2"
+  }
+}

@@ -1,0 +1,319 @@
+VIDEO PART 1
+BACKEND PART
+01. Project Server Setup
+    - Buat folder server -> install package di folder server
+    - npm init
+    - npm i bcryptjs cookie-parser cors dotenv express ioredis jsonwebtoken mongoose ts-node-dev @types/bcryptjs @types/cookie-parser @types/cors @types/express @types/jsonwebtoken @types/node typescript
+    - Setup server dengan membuat file app.ts, server.ts, dan .env
+    - Di file package.json, di bagian script tambahkan "dev": "ts-node-dev --respawn --transpile-only server.ts" untuk menjalankan server dalam mode dev menggunakan TypeScript
+    - Jika run ada error Unable to compile TypeScript, di dalam folder node_modules di semua file tsconfig.json, moduleResolution set ke NodeNext dan module set ke NodeNext
+02. Database, Cloudinary, Redis Connection
+    - Di file app.ts setup express, cookie-parser dan cors
+    - Buat code untuk testing api -> buka url http://localhost:8000/test
+    - Setup MongoDB -> buat database (u: support, p: lmsexercise)
+    - Update file .env -> NODE_ENV dan DB_URI
+    - Setup Cloudinary
+    - Update file .env -> CLOUD_NAME, CLOUD_API_KEY, CLOUD_SECRET_KEY
+    - Setup Upstash
+    - Update file .env -> REDIS_URL
+    - Buat file db.ts -> untuk menghubungkan Node JS dengan MongoDB
+    - Buat file redis.ts -> untuk menghubungkan Node JS dengan Redis
+03. Handle Errors
+    - Jika terjadi delay terhubung ke database -> Connect MongoDB ke localhost
+    - Update file .env bagian DB_URL -> DB_URL = 'mongodb://localhost:27017/lms'
+    - Buat file ErrorHandler.ts di folder utils -> digunakan untuk membuat custom error objects yang bisa berisi tambahan informasi terkait error yang terjadi di aplikasi
+    - Di dalam folder server buat folder middleware dan buat file error.ts di dalamnya
+    - Di dalam folder server buat folder middleware dan buat file catchAsyncErrors.ts di dalamnya
+    - npx tsc --init
+04. User Model Design
+    - Buat folder models di dalam folder server -> buat file user.model.ts
+05. User Registration
+    - Buat folder controllers di dalam folder server -> buat file user.controller.ts
+    - Di dalam file .env tambahkan ACTIVATION_SECRET code
+    - npm i --save-dev @types/ejs -> install ejs
+    - npm i --save-dev @types/nodemailer -> install nodemailer
+    - Buat folder mails di dalam server -> buat file activation-mail.ejs
+    - Di dalam file activation-mail.ejs buat template untuk aktivasi akun
+    - Di dalam folder utils buat file sendMail.ts
+    - Di file .env masukkan code SMTP
+    - Buat email baru untuk pengirim activation code nya (paskallms@gmail.com)
+    - Setup 2 step verification di email untuk generate smtp password di bagian app password google
+    - Buat folder routes di dalam folder server -> buat file user.route.ts
+    - Test API menggunakan Postman -> Menggunakan method post di bagian body isi data name, email, password
+06. User activation
+    - Di file user.controller.ts buat interface IActivationRequest
+    - Test di postman untuk activate-user pakai code dan token yang digenerate dari user registration / Register User
+07. Login, Logout User 
+    - Di file .env buat variables config -> ACCESS_TOKEN dan REFRESH_TOKEN
+    - Buat custom method login logout di file user.model.ts
+    - Di file user.controller.ts buat method untuk login user
+    - Di folder utils buat file jwt.ts
+    - Di file .env buat variables config -> ACCESS_TOKEN_EXPIRE dan REFRESH_TOKEN_EXPIRE
+    - Di file user.route.ts buat route untuk login dan logout
+    - Test di postman untuk login dan logout
+08. User Protected & Authorization middleware
+    - Di folder middleware buat file auth.ts
+    - Di folder server buat folder @types dan didalamnya buat file custom.d.ts
+    - Test di postman untuk login dan logout
+09. Generate new Access Token, user social authentication
+    - Di file user.controller.ts buat method untuk update access token
+    - Di file user.route.ts buat route untuk refresh -> test di postman
+    - Di file user.controller.ts buat method untuk get user info
+    - Di file user.route.ts buat route untuk get user info -> test di postman
+    - Buat folder services di dalam folder server -> buat file user.service.ts
+    - Di file user.controller.ts buat method untuk social auth
+    - Di file user.route.ts buat route untuk social auth -> test di postman
+10. Update user info, password, avatar
+    - Di file user.controller.ts buat method untuk update user info
+    - Di file user.route.ts buat route untuk update user info -> test di postman
+    - Di file user.controller.ts buat method untuk update user password
+    - Di file user.route.ts buat route untuk update user password -> test di postman
+    - Di file user.controller.ts buat method untuk update profile picture
+    - npm i cloudinary -> install cloudinary
+    - Di file server.ts buat cloudinary config
+    - Di file user.route.ts buat route untuk update user profile picture -> test di postman
+11. Course Model Design
+    - Di folder models buat file course.model.ts
+12. Create course, edit course
+    - Di folder controllers buat file course.controller.ts
+    - Di folder services buat file course.service.ts
+    - Di folder routes buat file course.route.ts
+    - Test di postman untuk create dan edit course
+13. Get single and all courses - without purchasing
+    - Di file course.controller.ts buat method untuk get single dan all courses
+    - Test di postman untuk get single dan all courses
+14. Get course content - for valid user
+    - Di file course.controller.ts buat method untuk get course content
+    - Test di postman untuk get course content
+15. Create question, add answer
+    - Di file course.controller.ts buat method untuk add question
+    - Test di postman untuk add question -> cek di mongodb
+    - Di file course.controller.ts buat method untuk add answer
+    - Di folder mails buat file question-reply.ejs untuk memberikan notifikasi
+    - Test di postman untuk add answer dengan user email (paskalgames18@gmail.com)
+    - Cek di mongodb dan email questioner (paskallms@gmail.com)
+16. Add review & reply in review
+    - Di file course.controller.ts buat method untuk add review
+    - Test di postman untuk add review
+    - Di file course.controller.ts buat method untuk add reply review untuk admin
+    - Test di postman untuk add reply
+17. Notification and Order Model
+    - Di folder models buat file order.model.ts dan notificationModel.ts
+18. Create Order
+    - Di folder controller buat file order.controller.ts
+    - Di folder services buat file order.services.ts
+    - Di folder mails buat file order-confirmation.ejs
+    - Di folder routes buat file order.route.ts
+    - Test di postman untuk create order
+19. Get all notifications, update notification status
+    - Di folder controller buat file notification.controller.ts
+    - Di folder routes buat file notification.route.ts
+    - Test di postman untu get all notification dan update notification status
+20. Delete notifications with cron job
+    - npm i node-cron
+    - npm i @types/node-cron
+    - Di file notification.controller.ts buat method untuk delete notification
+21. Get all users, orders, courses
+    - Di file user.services.ts buat method untuk get all users
+    - Buat route di masing masing file user, course, order route
+22. Update user role
+    - Di file user.controller.ts dan user.service.ts buat method untuk update user
+    - Di file user.route.ts buat route untuk update user
+    - Test di postman untuk update user
+23. Delete user, course
+    - Di file user.controller.ts method untuk delete user
+    - Di file course.controller.ts buat method untuk delete course
+    - Test di postman untuk delete user dan course
+24. Admin dashboard analytics
+    - Di folder utils buat file analytics.generator.ts
+    - Di folder controller buat file analytics.controller.ts
+    - Di folder routes buat file analytics.route.ts
+    - Test di postman untuk get users, courses, orders analytics
+25. Layout Model Design
+    - Di folder models buat file layout.model.ts
+26. Create FAQ, Hero, Categories
+    - Di folder controller buat file layout.controller.ts
+    - Di folder routes buat file layout.route.ts
+    - Test di postman untuk create layout FAQ dan Categories
+27. Edit FAQ, Hero, Categories
+    - Di file layout.controller.ts buat method untuk edit layout dan get layout
+    - Test di postman untuk edit layout dan get layout
+28. Advance Cache Maintenance
+    - Update file auth.ts
+    - Update file user.controller.ts, token expire setelah 7 hari
+
+VIDEO PART 2
+FRONTEND PART
+01. Client-side setup & header, hero component
+    - npx create-next-app@latest -> Install NextJS
+    - Setup theme file tailwind.config.js
+    - npm i next-themes
+    - Di folder app update file page.tsx
+    - Di folder app buat folder utils -> buat file Heading.tsx
+    - Di file global.css update body dan .hero-animation
+    - Di folder app buat folder utils -> buat file theme-provider.tsx
+    - Update file layout.tsx
+    - Di folder app buat folder components -> buat file Header.tsx
+    - Di folder utils buat file NavItems.tsx
+    - Di folder utils buat file ThemeSwitcher.tsx
+    - npm i react-icons
+    - Di folder components buat folder Route lalu buat file Hero.tsx
+02. Login, Sign Up, Verification UI
+    - npm install @mui/icons-material @mui/material @emotion/styled @emotion/react react-hot-toast react-redux @reduxjs/toolkit formik yup
+    - Update file header.tsx
+    - Di folder utils buat file CustomModal.tsx
+    - Di folder components buat folder Auth -> buat file Login.tsx
+    - Di folder app buat folder styles -> buat file style.ts
+    - Di folder Auth buat file SignUp.tsx
+    - Di folder Auth buat file Verification.tsx
+03. Manual Sign Up & User Verification Feature
+    - Di folder client buat folder redux -> buat folder features -> buat folder api -> buat file apiSlice.ts
+    - Di folder redux buat file store.ts
+    - Di folder client buat file .env
+    - Di folder app buat file Provider.tsx
+    - Di folder redux/features buat folder auth -> buat file authApi.ts authSlice.ts
+04. Implementing login, social auth features
+    - Update code dan test code untuk refresh token
+    - Update code untuk ganti avatar ketika sudah login
+    - Di folder client buat folder pages -> buat folder api -> buat folder auth -> buat file [...nextauth].ts
+    - Di folder pages/api -> buat file _app.tsx
+    - npm i next-auth
+    - update file .env untuk login via google / github
+    - Setup google cloud untuk dapat client id dan client secret (2:35:00)
+    - Setup github untuk dapat client id dan client secret
+    - Test login dengan google dan github
+05. User profile page UI & functionalities
+    - Di folder components buat folder Loader -> buat file Loader.tsx dan Loader.css
+    - Di folder client/app buat folder profile -> buat file page.tsx
+    - Di folder client/app buat folder hooks -> buat file useProtected.tsx dan userAuth.tsx
+    - Di folder app/components buat folder Profile -> buat file Profile.tsx dan SideBarProfile.tsx
+    - Di folder components/Profile -> buat file ProfileInfo.tsx dan ChangePassword.tsx
+    - Di folder redux buat folder features -> buat folder user dan didalamnya buat file userApi.ts
+    - Di file next.config.js buat update domain cloudinary -> agar bisa update avatar
+06. Edit profile and update password
+    - Di folder hooks buat file adminProtected.tsx
+07. Admin dashboard sidebar and create course UI
+    - Di folder app buat folder admin -> buat file page.tsx
+    - Di folder components buat folder Admin -> buat folder sidebar -> buat file AdminSidebar.tsx dan Icon.tsx
+    - npm i react-pro-sidebar@^0.7.1
+    - Di folder components/Admin buat file DashboardHero.tsx dan DashboardHeader.tsx
+    - Di folder app/admin buat folder create-course -> buat file page.tsx
+    - Di folder components/Admin buat folder Course -> buat file CreateCourse.tsx, CourseInformation.tsx, CourseOptions.tsx, CourseData.tsx, CourseContent.tsx, CoursePreview.tsx
+08. Create course content and course preview UI + functionalities
+    - Di folder Course buat file CourseContent.tsx, CoursePreview.tsx
+    - Di folder app/utils buat file CoursePlayer.tsx
+    - VDO Cipher -> setup web VDO Cipher, save api key di file .env server -> update code di course.controller.ts
+    - npm i axios di direktori server dan client
+    - Di folder app/utils buat file Rating.tsx
+09. Create course features
+    - Di folder redux/features buat folder courses -> buat file coursesApi.ts
+    - Di folder server/route update semua file route untuk method updateAccessToken
+10. Get all users, courses, manage team UI
+    - Di folder app/admin buat folder courses -> buat file page.tsx
+    - Di folder components/Admin/Course buat file AllCourses.tsx
+    - npm i @mui/x-data-grid
+    - npm i timeago.js
+    - Di folder app/admin buat folder users -> buat file page.tsx
+    - Di folder components/Admin buat folder Users -> buat file AllUsers.tsx
+    - Di folder app/admin buat folder team -> buat file page.tsx
+11. Edit course and delete course
+    - Update di file AllCourses.tsx untuk fitur delete course
+    - Di folder app/admin buat folder edit-course -> buat folder [id] dan didalamnya buat file page.tsx
+    - Di folder components/Admin/Course buat file EditCourse.tsx
+12. Banner, FAQ, Categories Customization
+    - Di folder app/admin buat folder hero -> buat file page.tsx
+    - Di folder components/Admin buat folder Customization -> buat file EditHero.tsx
+    - Di folder redux/features buat folder layout -> buat file layoutApi.ts
+    - Di folder app/admin buat folder faq -> buat file page.tsx
+    - Di folder components/Admin/Customization -> buat file EditFaq.tsx
+    - Di folder app/admin buat folder categories -> buat file page.tsx
+    - Di folder components/Admin/Customization -> buat file EditCategories.tsx
+13. Courses, Orders, Users analytics
+    - Di folder app/admin buat folder courses-analytics -> buat file page.tsx
+    - Di folder components/Admin buat folder Analytics -> buat file CourseAnalytics.tsx
+    - npm i recharts
+    - Di folder redux/features buat folder analytics -> buat file analyticsApi.ts
+    - Di folder app/admin buat folder users-analytics -> buat file page.tsx
+    - Di folder components/Admin/Analytics -> buat file UserAnalytics.tsx
+    - Di folder app/admin buat folder orders-analytics -> buat file page.tsx
+    - Di folder components/Admin/Analytics -> buat file OrderAnalytics.tsx
+    - Update DashboardHero.tsx
+    - Di folder components/Admin buat folder widget -> buat file DashboardWidgets.tsx
+    - Di folder components/Admin buat folder Order -> buat file AllInvoices.tsx
+    - Di folder redux/features buat folder orders -> buat file ordersApi.ts
+    - Di folder app/admin buat folder invoices -> buat file page.tsx
+
+VIDEO PART 3
+
+14. Courses, Reviews, FAQ, Footer UI and features
+    - Setting bagian hero agar menjadi dynamic
+    - Di folder components/Route buat file Course.tsx
+    - Di folder components/Course buat file CourseCard.tsx
+    - Di folder components/Route buat file Reviews.tsx
+    - Di folder components/Review buat file ReviewCard.tsx
+    - Di file next.config.js update images domain dari web provider image (ex:randomuser.me atau image.unsplash.com)
+    - Di folder components/FAQ buat file FAQ.tsx
+    - Di folder components/Footer buat file Footer.tsx
+15. Course Details UI and functionalities
+    - Di folder client/app buat folder course -> buat folder [id] dan didalamnya buat file page.tsx
+    - Di folder components/Course buat file CourseDetailsPage.tsx, CourseDetails.tsx, CourseContentList.tsx
+16. Stripe Integration and Create Order
+    - Setting stripe account
+    - Tambahkan Stripe Key di file .env server
+    - Update file order.controller.ts dan order.route.ts
+    - Update file ordersApi.ts
+    - Update CourseDetailsPage.tsx
+    - npm i @stripe/stripe-js @stripe/react-stripe-js di directory client
+    - npm i stripe di directory server
+    - Di folder app/components buat folder Payment -> buat file CheckOutForm.tsx
+17. Course Access Page UI + Functionalities
+    - Di folder client/app buat folder course-access[id] -> buat folder [id] -> buat file page.tsx
+    - Di folder components/Course buat file CourseContent.tsx dan CourseContentMedia.tsx 
+18. Adding question and answer features in content
+    - Update file CourseContentMedia.tsx
+    - Update file course.model.ts untuk update timestamps
+    - Update file course.controller.ts di method addAnswer
+18. Adding review and review reply features
+    - Update file course.controller.ts
+    - Update file CourseContentMedia.tsx
+19. Search, Filter Features and All Courses Page
+    - Update file Hero.tsx untuk add loading dan fitur Search
+    - Di folder client/app buat folder courses -> buat file page.tsx
+    - Update file CheckOutForm.tsx untuk buy course setelah login
+20. Create Socket Server & Implement Instant Notification
+    - npm i socket.io @types/socket.io -> di directory server
+    - Update file server.ts
+    - Di folder server buat file socketServer.ts
+    - npm i socket.io-client -> di directory client
+    - Update file layout.tsx, CheckOutForm.tsx, CourseContentMedia.tsx, DashboardHeader.tsx untuk menambah fitur notification
+    - Di folder redux/features buat folder notification -> buat file notificationApi.ts
+    - Update file Header.tsx, CustomModal.tsx, Login.tsx untuk problem bug login
+    - Update course order -> nanti dicek lagi 5.20.00
+21. Review Full Aplication
+    - Di folder client/app buat folder about, faq dan policy -> masing masing folder didalamnya buat file page.tsx
+    - Tambahkan footer di bagian profile
+    - Update bagian profile untuk fitur enrolled courses
+    - Update file AllInvoices.tsx
+22. Deployment & Outro
+    - 
+    
+ERROR / BUG FRONTEND
+- Kalau login manual, session kosong
+- api/v1/refresh not found
+- Error default next js ada 3
+- Custom hero error waktu save -> Cannot read properties of undefined (reading 'public_id')
+- Di bagian customization, Toast muncul 2 kali
+- Gambar course tidak muncul di bagian homepage
+- Judul section tidak terupdate
+- Mark as unread kadang gabisa dihapus
+- Window notification ketimpa recent transaction
+- Window notification kadang gabisa dibuka
+- 
+
+    
+
+
+
+
+
+
